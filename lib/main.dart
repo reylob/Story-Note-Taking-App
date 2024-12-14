@@ -79,10 +79,12 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       if (storiesData != null) {
-        stories = List<Story>.from(json.decode(storiesData).map((x) => Story.fromJson(x)));
+        stories = List<Story>.from(
+            json.decode(storiesData).map((x) => Story.fromJson(x)));
       }
       if (savedStoriesData != null) {
-        savedStories = List<Story>.from(json.decode(savedStoriesData).map((x) => Story.fromJson(x)));
+        savedStories = List<Story>.from(
+            json.decode(savedStoriesData).map((x) => Story.fromJson(x)));
       }
     });
   }
@@ -131,7 +133,8 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SavedStoriesPage(savedStories: savedStories),
+                  builder: (context) => SavedStoriesPage(
+                      savedStories: savedStories), // Pass savedStories here
                 ),
               );
             },
@@ -145,14 +148,17 @@ class _HomePageState extends State<HomePage> {
           return Card(
             margin: EdgeInsets.all(8.0),
             child: ListTile(
-              title: Text(story.title, style: TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(story.title,
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
                     icon: Icon(
                       Icons.favorite,
-                      color: savedStories.contains(story) ? Colors.red : Colors.grey,
+                      color: savedStories.contains(story)
+                          ? Colors.red
+                          : Colors.grey,
                     ),
                     onPressed: () => toggleSavedStory(story),
                   ),
@@ -280,32 +286,69 @@ class StoryDetailPage extends StatelessWidget {
   }
 }
 
-class SavedStoriesPage extends StatelessWidget {
-  final List<Story> savedStories;
+class SavedStoriesPage extends StatefulWidget {
+  final List<Story> savedStories; // Add this line
 
-  SavedStoriesPage({required this.savedStories});
+  SavedStoriesPage(
+      {required this.savedStories}); // Constructor to accept savedStories
+
+  @override
+  _SavedStoriesPageState createState() => _SavedStoriesPageState();
+}
+
+class _SavedStoriesPageState extends State<SavedStoriesPage> {
+  // A list to store saved stories
+  List<Story> savedStories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Load saved stories from storage or database
+    loadSavedStories();
+  }
+
+  // A method to load saved stories (simulate loading from storage)
+  void loadSavedStories() {
+    // Example: Simulating loading saved stories
+    savedStories = [
+      Story(title: 'Story 1', content: 'Content of story 1'),
+      Story(title: 'Story 2', content: 'Content of story 2'),
+      Story(title: 'Story 3', content: 'Content of story 3'),
+    ];
+    setState(() {});
+  }
+
+  // A method to delete a story
+  void deleteStory(int index) {
+    setState(() {
+      savedStories.removeAt(index); // Remove the story from the list
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Saved Stories'),
-        centerTitle: true,
       ),
-      body: savedStories.isEmpty
-          ? Center(child: Text('No saved stories yet.'))
-          : ListView.builder(
-              itemCount: savedStories.length,
-              itemBuilder: (context, index) {
-                final story = savedStories[index];
-                return Card(
-                  margin: EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(story.title),
-                  ),
-                );
-              },
+      body: ListView.builder(
+        itemCount: savedStories.length,
+        itemBuilder: (context, index) {
+          final story = savedStories[index];
+          return Card(
+            margin: EdgeInsets.all(8.0),
+            child: ListTile(
+              title: Text(story.title),
+              subtitle: Text(story.content),
+              trailing: IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () =>
+                    deleteStory(index), // Delete the story when pressed
+              ),
             ),
+          );
+        },
+      ),
     );
   }
 }

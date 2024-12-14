@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Story class to model the story data
 class Story {
   final String title;
   final String content;
@@ -23,6 +24,7 @@ class Story {
   }
 }
 
+// SavedStoriesPage widget to display saved stories and handle deletion
 class SavedStoriesPage extends StatefulWidget {
   @override
   _SavedStoriesPageState createState() => _SavedStoriesPageState();
@@ -47,6 +49,7 @@ class _SavedStoriesPageState extends State<SavedStoriesPage> {
         savedStories = List<Story>.from(
             json.decode(savedStoriesData).map((x) => Story.fromJson(x)));
       });
+      print("Loaded saved stories: $savedStories");  // Debug log
     }
   }
 
@@ -54,14 +57,22 @@ class _SavedStoriesPageState extends State<SavedStoriesPage> {
   void deleteSavedStory(int index) async {
     setState(() {
       savedStories.removeAt(index);  // Remove the story from the list
-      _saveSavedStories();  // Update SharedPreferences
     });
+
+    // Save the updated list to SharedPreferences
+    await _saveSavedStories();
+
+    // Optional: If you want to show a message after deletion
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Story deleted')),
+    );
   }
 
   // Save the updated saved stories list to SharedPreferences
   Future<void> _saveSavedStories() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('savedStories', json.encode(savedStories));  // Save to SharedPreferences
+    print("Saved stories after deletion: ${json.encode(savedStories)}");  // Debug log
   }
 
   @override

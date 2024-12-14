@@ -29,7 +29,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
   final List<Widget> _pages = [
     HomePage(),
     HistoryPage(),
-    AboutPage(), // New About Page
+    AboutPage(),  // New About Page
   ];
 
   @override
@@ -54,13 +54,14 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.info),
-            label: 'About', // About Tab
+            label: 'About',  // About Tab
           ),
         ],
       ),
     );
   }
 }
+
 
 class HomePage extends StatefulWidget {
   @override
@@ -84,21 +85,19 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       if (storiesData != null) {
-        stories = List<Story>.from(
-            json.decode(storiesData).map((x) => Story.fromJson(x)));
+        stories = List<Story>.from(json.decode(storiesData).map((x) => Story.fromJson(x)));
       }
       if (savedStoriesData != null) {
-        savedStories = List<Story>.from(
-            json.decode(savedStoriesData).map((x) => Story.fromJson(x)));
+        savedStories = List<Story>.from(json.decode(savedStoriesData).map((x) => Story.fromJson(x)));
       }
     });
   }
 
-  Future<void> _saveStories() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('stories', json.encode(stories));
-    prefs.setString('savedStories', json.encode(savedStories));
-  }
+Future<void> _saveStories() async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString('stories', json.encode(stories));
+  prefs.setString('savedStories', json.encode(savedStories));
+}
 
   void addNewStory(String title, String content) {
     setState(() {
@@ -106,17 +105,17 @@ class _HomePageState extends State<HomePage> {
       _saveStories();
     });
   }
-
-  void toggleSavedStory(Story story) {
-    setState(() {
-      if (savedStories.contains(story)) {
-        savedStories.remove(story);
-      } else {
-        savedStories.add(story);
-      }
-      _saveStories();
-    });
-  }
+  
+void toggleSavedStory(Story story) {
+  setState(() {
+    if (savedStories.contains(story)) {
+      savedStories.remove(story);
+    } else {
+      savedStories.add(story);
+    }
+    _saveStories();
+  });
+}
 
   void deleteStory(int index) {
     setState(() {
@@ -138,12 +137,12 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SavedStoriesPage(
-                      savedStories: savedStories), // Pass savedStories here
-                ),
-              );
-            },
-          ),
+                  builder: (context) => SavedStoriesPage(savedStories: savedStories),
+                  ),
+                );
+               },
+              ),
+
         ],
       ),
       body: ListView.builder(
@@ -153,17 +152,14 @@ class _HomePageState extends State<HomePage> {
           return Card(
             margin: EdgeInsets.all(8.0),
             child: ListTile(
-              title: Text(story.title,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(story.title, style: TextStyle(fontWeight: FontWeight.bold)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
                     icon: Icon(
                       Icons.favorite,
-                      color: savedStories.contains(story)
-                          ? Colors.red
-                          : Colors.grey,
+                      color: savedStories.contains(story) ? Colors.red : Colors.grey,
                     ),
                     onPressed: () => toggleSavedStory(story),
                   ),
@@ -197,6 +193,41 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+class AboutPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('About'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'StoryNoteApp',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'A simple story app where you can add, view, save, and delete stories. Developed by Edreynald F. Alob.',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Version: 1.0.0',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 
 class HistoryPage extends StatelessWidget {
   @override
@@ -268,39 +299,6 @@ class _AddStoryDialogState extends State<AddStoryDialog> {
   }
 }
 
-class AboutPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('About'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'StoryNoteApp',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'A simple story app where you can add, view, save, and delete stories. Developed by Edreynald F. Alob.',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Version: 1.0.0',
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class StoryDetailPage extends StatelessWidget {
   final Story story;
 
@@ -325,45 +323,46 @@ class StoryDetailPage extends StatelessWidget {
 }
 
 class SavedStoriesPage extends StatefulWidget {
-  final List<Story> savedStories; // Add this line
+  final List<Story> savedStories;
 
-  SavedStoriesPage(
-      {required this.savedStories}); // Constructor to accept savedStories
+  SavedStoriesPage({required this.savedStories});
 
   @override
   _SavedStoriesPageState createState() => _SavedStoriesPageState();
 }
 
 class _SavedStoriesPageState extends State<SavedStoriesPage> {
-  // A list to store saved stories
-  List<Story> savedStories = [];
+  late List<Story> savedStories;
 
   @override
   void initState() {
     super.initState();
-    // Load saved stories from storage or database
-    loadSavedStories();
+    savedStories = widget.savedStories;  // Initialize savedStories with the passed data
   }
 
   // A method to load saved stories (simulate loading from storage)
   void loadSavedStories() async {
-  final prefs = await SharedPreferences.getInstance();
-  final String? savedStoriesData = prefs.getString('savedStories');
-  
-  if (savedStoriesData != null) {
-    print("Loaded stories: $savedStoriesData");
-    setState(() {
-      savedStories = List<Story>.from(
-          json.decode(savedStoriesData).map((x) => Story.fromJson(x)));
-    });
+    final prefs = await SharedPreferences.getInstance();
+    final String? savedStoriesData = prefs.getString('savedStories');
+    
+    if (savedStoriesData != null) {
+      print("Loaded stories: $savedStoriesData");
+      setState(() {
+        savedStories = List<Story>.from(
+            json.decode(savedStoriesData).map((x) => Story.fromJson(x)));
+      });
+    }
   }
-}
 
   // A method to delete a story
-  void deleteStory(int index) {
+  void deleteStory(int index) async {
     setState(() {
       savedStories.removeAt(index); // Remove the story from the list
     });
+
+    // Save the updated list after deletion
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('savedStories', json.encode(savedStories.map((e) => e.toJson()).toList()));
   }
 
   @override
@@ -383,8 +382,7 @@ class _SavedStoriesPageState extends State<SavedStoriesPage> {
               subtitle: Text(story.content),
               trailing: IconButton(
                 icon: Icon(Icons.delete),
-                onPressed: () =>
-                    deleteStory(index), // Delete the story when pressed
+                onPressed: () => deleteStory(index), // Delete the story when pressed
               ),
             ),
           );
@@ -394,19 +392,22 @@ class _SavedStoriesPageState extends State<SavedStoriesPage> {
   }
 }
 
+
 class Story {
   final String title;
   final String content;
 
   Story({required this.title, required this.content});
 
+  // Convert a map to a Story instance
   factory Story.fromJson(Map<String, dynamic> json) {
     return Story(
-      title: json['title'],
-      content: json['content'],
+      title: json['title'] ?? '',
+      content: json['content'] ?? '',
     );
   }
 
+  // Convert a Story instance to a map
   Map<String, dynamic> toJson() {
     return {
       'title': title,

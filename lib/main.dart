@@ -8,6 +8,8 @@ void main() {
 }
 
 class StoryApp extends StatelessWidget {
+  StoryApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,7 +31,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
   final List<Widget> _pages = [
     HomePage(),
     HistoryPage(),
-    AboutPage(),  // New About Page
+    AboutPage(), // New About Page
   ];
 
   @override
@@ -54,14 +56,13 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.info),
-            label: 'About',  // About Tab
+            label: 'About', // About Tab
           ),
         ],
       ),
     );
   }
 }
-
 
 class HomePage extends StatefulWidget {
   @override
@@ -85,19 +86,21 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       if (storiesData != null) {
-        stories = List<Story>.from(json.decode(storiesData).map((x) => Story.fromJson(x)));
+        stories = List<Story>.from(
+            json.decode(storiesData).map((x) => Story.fromJson(x)));
       }
       if (savedStoriesData != null) {
-        savedStories = List<Story>.from(json.decode(savedStoriesData).map((x) => Story.fromJson(x)));
+        savedStories = List<Story>.from(
+            json.decode(savedStoriesData).map((x) => Story.fromJson(x)));
       }
     });
   }
 
-Future<void> _saveStories() async {
-  final prefs = await SharedPreferences.getInstance();
-  prefs.setString('stories', json.encode(stories));
-  prefs.setString('savedStories', json.encode(savedStories));
-}
+  Future<void> _saveStories() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('stories', json.encode(stories));
+    prefs.setString('savedStories', json.encode(savedStories));
+  }
 
   void addNewStory(String title, String content) {
     setState(() {
@@ -105,17 +108,17 @@ Future<void> _saveStories() async {
       _saveStories();
     });
   }
-  
-void toggleSavedStory(Story story) {
-  setState(() {
-    if (savedStories.contains(story)) {
-      savedStories.remove(story);
-    } else {
-      savedStories.add(story);
-    }
-    _saveStories();
-  });
-}
+
+  void toggleSavedStory(Story story) {
+    setState(() {
+      if (savedStories.contains(story)) {
+        savedStories.remove(story);
+      } else {
+        savedStories.add(story);
+      }
+      _saveStories();
+    });
+  }
 
   void deleteStory(int index) {
     setState(() {
@@ -137,12 +140,12 @@ void toggleSavedStory(Story story) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SavedStoriesPage(savedStories: savedStories),
-                  ),
-                );
-               },
-              ),
-
+                  builder: (context) =>
+                      SavedStoriesPage(savedStories: savedStories),
+                ),
+              );
+            },
+          ),
         ],
       ),
       body: ListView.builder(
@@ -152,14 +155,17 @@ void toggleSavedStory(Story story) {
           return Card(
             margin: EdgeInsets.all(8.0),
             child: ListTile(
-              title: Text(story.title, style: TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(story.title,
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
                     icon: Icon(
                       Icons.favorite,
-                      color: savedStories.contains(story) ? Colors.red : Colors.grey,
+                      color: savedStories.contains(story)
+                          ? Colors.red
+                          : Colors.grey,
                     ),
                     onPressed: () => toggleSavedStory(story),
                   ),
@@ -199,35 +205,88 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('About'),
+        title: Text(
+          'About StoryNoteApp',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.blueAccent,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'StoryNoteApp',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'A simple story app where you can add, view, save, and delete stories. Developed by Edreynald F. Alob.',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Version: 1.0.0',
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade200, Colors.blue.shade800],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              
+              // Description with background color and rounded corners
+              Container(
+                padding: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      offset: Offset(0, 4),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'A simple story app where you can add, view, save, and delete stories. Developed by Edreynald F. Alob.',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Version: 1.0.0',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+
+              // Button to show more info or contact info
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Add your action for the button, e.g., opening a contact page or more info.
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors
+                        .blueAccent, // Changed `primary` to `backgroundColor`
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                  ),
+                  child: Text(
+                    'Contact Me',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
-
 
 class HistoryPage extends StatelessWidget {
   @override
@@ -262,39 +321,98 @@ class _AddStoryDialogState extends State<AddStoryDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Add New Story'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: titleController,
-            decoration: InputDecoration(labelText: 'Story Title'),
-          ),
-          TextField(
-            controller: contentController,
-            decoration: InputDecoration(labelText: 'Story Content'),
-            maxLines: 5,
-          ),
-        ],
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('Cancel'),
+      elevation: 16.0,
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white, // Solid color background
+          borderRadius: BorderRadius.circular(16.0),
         ),
-        ElevatedButton(
-          onPressed: () {
-            final title = titleController.text.trim();
-            final content = contentController.text.trim();
-            if (title.isNotEmpty && content.isNotEmpty) {
-              widget.onAdd(title, content);
-              Navigator.pop(context);
-            }
-          },
-          child: Text('Add'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Add New Story',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(height: 16),
+            TextField(
+              controller: titleController,
+              decoration: InputDecoration(
+                labelText: 'Story Title',
+                labelStyle: TextStyle(color: Colors.black),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue, width: 2),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              style: TextStyle(color: Colors.black),
+            ),
+            SizedBox(height: 16),
+            TextField(
+              controller: contentController,
+              decoration: InputDecoration(
+                labelText: 'Story Content',
+                labelStyle: TextStyle(color: Colors.black),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue, width: 2),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              maxLines: 5,
+              style: TextStyle(color: Colors.black),
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    final title = titleController.text.trim();
+                    final content = contentController.text.trim();
+                    if (title.isNotEmpty && content.isNotEmpty) {
+                      widget.onAdd(title, content);
+                      Navigator.pop(context);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+            
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Add',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -337,14 +455,15 @@ class _SavedStoriesPageState extends State<SavedStoriesPage> {
   @override
   void initState() {
     super.initState();
-    savedStories = widget.savedStories;  // Initialize savedStories with the passed data
+    savedStories =
+        widget.savedStories; // Initialize savedStories with the passed data
   }
 
   // A method to load saved stories (simulate loading from storage)
   void loadSavedStories() async {
     final prefs = await SharedPreferences.getInstance();
     final String? savedStoriesData = prefs.getString('savedStories');
-    
+
     if (savedStoriesData != null) {
       print("Loaded stories: $savedStoriesData");
       setState(() {
@@ -362,7 +481,8 @@ class _SavedStoriesPageState extends State<SavedStoriesPage> {
 
     // Save the updated list after deletion
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('savedStories', json.encode(savedStories.map((e) => e.toJson()).toList()));
+    prefs.setString('savedStories',
+        json.encode(savedStories.map((e) => e.toJson()).toList()));
   }
 
   @override
@@ -382,7 +502,8 @@ class _SavedStoriesPageState extends State<SavedStoriesPage> {
               subtitle: Text(story.content),
               trailing: IconButton(
                 icon: Icon(Icons.delete),
-                onPressed: () => deleteStory(index), // Delete the story when pressed
+                onPressed: () =>
+                    deleteStory(index), // Delete the story when pressed
               ),
             ),
           );
@@ -391,7 +512,6 @@ class _SavedStoriesPageState extends State<SavedStoriesPage> {
     );
   }
 }
-
 
 class Story {
   final String title;

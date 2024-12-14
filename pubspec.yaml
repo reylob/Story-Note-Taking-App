@@ -1,4 +1,4 @@
-name: StoryNoteApp
+name: story_note_app
 description: A simple story app in Flutter.
 version: 1.0.0+1
 
@@ -11,6 +11,7 @@ dependencies:
   shared_preferences: ^2.1.1
 
 dev_dependencies:
+  flutter_lints: ^2.0.0
   flutter_launcher_icons: ^0.10.0
   flutter_test:
     sdk: flutter
@@ -18,7 +19,9 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/icon/app_icon.png"
+  image_path: "assets/icon/image.png"
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/icon/image.png

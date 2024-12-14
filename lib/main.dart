@@ -29,6 +29,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
   final List<Widget> _pages = [
     HomePage(),
     HistoryPage(),
+    AboutPage(), // New About Page
   ];
 
   @override
@@ -50,6 +51,10 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
             label: 'History',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info),
+            label: 'About', // About Tab
           ),
         ],
       ),
@@ -263,6 +268,39 @@ class _AddStoryDialogState extends State<AddStoryDialog> {
   }
 }
 
+class AboutPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('About'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'StoryNoteApp',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'A simple story app where you can add, view, save, and delete stories. Developed by Edreynald F. Alob.',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Version: 1.0.0',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class StoryDetailPage extends StatelessWidget {
   final Story story;
 
@@ -308,15 +346,18 @@ class _SavedStoriesPageState extends State<SavedStoriesPage> {
   }
 
   // A method to load saved stories (simulate loading from storage)
-  void loadSavedStories() {
-    // Example: Simulating loading saved stories
-    savedStories = [
-      Story(title: 'Story 1', content: 'Content of story 1'),
-      Story(title: 'Story 2', content: 'Content of story 2'),
-      Story(title: 'Story 3', content: 'Content of story 3'),
-    ];
-    setState(() {});
+  void loadSavedStories() async {
+  final prefs = await SharedPreferences.getInstance();
+  final String? savedStoriesData = prefs.getString('savedStories');
+  
+  if (savedStoriesData != null) {
+    print("Loaded stories: $savedStoriesData");
+    setState(() {
+      savedStories = List<Story>.from(
+          json.decode(savedStoriesData).map((x) => Story.fromJson(x)));
+    });
   }
+}
 
   // A method to delete a story
   void deleteStory(int index) {
